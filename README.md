@@ -1,20 +1,20 @@
-<!--# 使用云上曲率实时语音识别&翻译插件-->
-# LiveData RTVT
-<!--本文介绍如何在你的项目中集成和使用云上曲率实时语音识别&翻译插件（以下简称曲率识别及翻译插件），包括Android和iOS平台。-->
+<!--# 使用云上曲率实时音视频审核插件
+本文介绍如何在你的项目中集成和使用云上曲率实时音视频审核插件（以下简称实时音视频审核插件），包括Android和iOS平台。
+-->
+# LiveData RTAU
 
 This guide is provided by LiveData. Agora is planning a documentation upgrade program for all extensions on the marketplace. Please stay tuned.
 
-LiveData RTVT extension allows you to embed real-time voice transcription and translation into your mobile application providing automated speech recognition(ASR) without any upfront data training requirements.You can find the integration examples below.
+LiveData RTAU extension allows you to embed real-time video moderation into your mobile application providing automated AI recognition of various risky contents from backend,  without any upfront data training requirements.You can find the integration examples below.
 
 
 <!--## 技术原理
 
-曲率识别及翻译插件是对云上曲率[实时语音识别](https://docs.ilivedata.com/asr/overview/introduction/)和[实时翻译](https://docs.ilivedata.com/alt/overview/introduction/)核心 API 的封装。通过调用[声网视频 SDK v4.2.0 Beta](https://docs.agora.io/cn/video-call-4.x-beta/product_video_ng?platform=Android) 的 [setExtensionProperty](https://docs.agora.io/cn/video-call-4.x-beta/API%20Reference/java_ng/API/class_irtcengine.html#api_setextensionproperty) 或 [setExtensionPropertyWithVendor](https://docs.agora.io/cn/video-call-4.x-beta/API%20Reference/ios_ng/API/class_irtcengine.html#api_setextensionproperty)方法，传入指定的 `key` 和 `value` 参数，你可以快速集成云上曲率的实时语音识别和翻译的能力。支持的 key 和 value 详见[插件的 key-value 列表]（./模板-插件接口说明v1.md/#方法 key 的 value 说明）。
+实时音视频审核插件是对云上曲率[实时音频审核](https://docs.ilivedata.com/audiocheck/product/_information/)和[实时视频审核](https://docs.ilivedata.com/videocheck/product/_information/)核心 API 的封装。通过调用[声网视频 SDK v4.2.0 Beta](https://docs.agora.io/cn/video-call-4.x-beta/product_video_ng?platform=Android) 的 [setExtensionProperty](https://docs.agora.io/cn/video-call-4.x-beta/API%20Reference/java_ng/API/class_irtcengine.html#api_setextensionproperty) 或 [setExtensionPropertyWithVendor](https://docs.agora.io/cn/video-call-4.x-beta/API%20Reference/ios_ng/API/class_irtcengine.html#api_setextensionproperty)方法，传入指定的 `key` 和 `value` 参数，你可以快速集成云上曲率的实时语音识别和翻译的能力。支持的 key 和 value 详见[插件的 key-value 列表]（）。
 -->
-
 ## Understand the tech
 
-The LiveData RTVT extension encapsulates the core APIs of the LiveData RTVT SDK. By calling the [setExtensionProperty](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) or [setExtensionPropertyWithVendor](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) method of the [Agora Video SDK v4.x]() and passing in the corresponding `key` and `value`, you can quickly integrate capabilities of LiveData RTVT. For details, see the key-value overview.
+The LiveData RTAU extension encapsulates the core APIs of the LiveData RTAU SDK. By calling the [setExtensionProperty](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) or [setExtensionPropertyWithVendor](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) method of the [Agora Video SDK v4.x]() and passing in the corresponding `key` and `value`, you can quickly integrate capabilities of LiveData RTAU. For details, see the [key-value]() overview.
 
 <!--## 前提条件
 
@@ -35,74 +35,74 @@ The development environment has to meet the following requirements:
   - A physical device (not an emulator) running iOS 9.0 or later.
 
 
-<!--## 准备工作-->
+<!--
+
+## 准备工作
+
+### 使用声网 SDK 实现视频通话
+
+实时音视频审核插件需要与[声网视频 SDK v4.2.0 Beta](https://docs.agora.io/cn/video-call-4.x-beta/product_video_ng?platform=Android) 搭配使用。参考以下文档集成视频 SDK v4.2.0 Beta 并实现基础的视频通话：
+- [实现视频通话（Android）](https://docs.agora.io/cn/video-call-4.x-beta/start_call_android_ng?platform=Android#%E5%BB%BA%E7%AB%8B%E9%A1%B9%E7%9B%AE)
+- [实现视频通话（iOS）](https://docs.agora.io/cn/video-call-4.x-beta/start_call_ios_ng%20?platform=iOS#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE)
+
+### 购买和激活插件
+
+在声网控制台[购买和激活](https://docs.agora.io/cn/extension_customer/get_extension?platform=All%20Platforms)实时音视频审核插件，保存好获取到的 `appKey` 和 `appSecret`，后续初始化插件时需要用到。
+
+### 集成插件
+
+参考如下步骤在你的项目中集成实时音视频审核插件：
+
+**Android**
+
+
+1. 在[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载实时音视频审核插件的 `Android` 插件包。解压后，将所有 `libagora-iLiveData-filter.aar` 文件保存到项目文件夹的  `/app/libs`  路径。
+
+2. 打开 `app/build.gradle` 文件，在 `dependencies` 中添加如下行：
+   ```java
+   implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+   ```
+
+**iOS**
+
+
+1. 在[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载实时音视频审核插件的 iOS 插件包。解压后，将所有 `.framework` 库文件保存到你的项目文件夹下。
+3. 在 Xcode 中[添加动态库](https://help.apple.com/xcode/mac/current/#/dev51a648b07)，确保 **Embed** 属性设置为 **Embed & Sign**。
+
+以如下项目结构为例，你可以把库文件保存到 `<ProjectName>` 路径下。
+
+```shell
+├── <ProjectName>
+├── <ProjectName>.xcodeproj
+```
+-->
+
 ## Project Setup
 
-The LiveData RTVT extension works together with the Video SDK v4.x. Refer to the following doc to integrate the SDK and start a basic voice call:
+The LiveData RTAU extension works together with the Video SDK v4.x. Refer to the following doc to integrate the SDK and start a basic voice call:
 
 - SDK quickstart
   - [Android](https://docs.agora.io/en/voice-calling/get-started/get-started-sdk?platform=android)
   - [iOS](https://docs.agora.io/en/voice-calling/get-started/get-started-sdk?platform=ios)
 
-<!--### 使用声网 SDK 实现视频通话
-
-曲率识别及翻译插件需要与[声网视频 SDK v4.2.0 Beta](https://docs.agora.io/cn/video-call-4.x-beta/product_video_ng?platform=Android) 搭配使用。参考以下文档集成视频 SDK v4.2.0 Beta 并实现基础的视频通话：
-- [实现视频通话（Android）](https://docs.agora.io/cn/video-call-4.x-beta/start_call_android_ng?platform=Android#%E5%BB%BA%E7%AB%8B%E9%A1%B9%E7%9B%AE)
-- [实现视频通话（iOS）](https://docs.agora.io/cn/video-call-4.x-beta/start_call_ios_ng%20?platform=iOS#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE)
-
-
-
-### 购买和激活插件
-
-在声网控制台[购买和激活](https://docs.agora.io/cn/extension_customer/get_extension?platform=All%20Platforms)曲率识别及翻译插件，保存好获取到的 `appKey` 和 `appSecret`，后续初始化插件时需要用到。--->
-
 To receive a `appKey` and a `appSecret` from LiveData
 - please buy and activate the extension project on [Agora Console](https://console.agora.io/), then click View in the Secret column.
 - or contact us via Agora.
 
-<!--### 集成插件-->
-
 ## Integrate the extension
-
-<!--参考如下步骤在你的项目中集成曲率识别及翻译插件：-->
-
-<!--**Android**
-
-
-1. 在[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载曲率识别及翻译插件的 Android 插件包。解压后，将所有 `.aar` 文件保存到项目文件夹的  `/app/libs`  路径。
-2. 打开 `app/build.gradle` 文件，在 `dependencies` 中添加如下行：
-
-   ```java
-   implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-   ```
--->
 ### Android
 
-1. [Download]() the Android package of LiveData RTVT from the Extensions Marketplace.
-2. Unzip the package, and save all `.aar` files to the `/app/libs` path of your project folder.
+1. [Download]() the Android package of LiveData RTAu from the Extensions Marketplace.
+2. Unzip the package, and save all `libagora-iLiveData-filter.aar` files to the `/app/libs` path of your project folder.
 3. In the `app/build.gradle` file, add the following line in `dependencies`:
 
 ```java
 implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
 ```
 
-<!--**iOS**
-
-
-1. 在[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载曲率识别及翻译插件的 iOS 插件包。解压后，将所有 `.framework` 库文件保存到你的项目文件夹下。
-2. 在 Xcode 中[添加动态库](https://help.apple.com/xcode/mac/current/#/dev51a648b07)，确保 **Embed** 属性设置为 **Embed & Sign**。
-
-以如下项目结构为例，你可以把库文件保存到 `<ProjectName>` 路径下。
-
-```shell
-.
-├── <ProjectName>
-├── <ProjectName>.xcodeproj
-```
--->
 ### iOS
 
-1. [Download]() the iOS package of LiveData RTVT from the Extensions Marketplace.
+1. [Download]() the iOS package of LiveData RTAU from the Extensions Marketplace.
 2. Unzip the package, and save all `.framework` files to the `<ProjectName> `path.
 3. Ensure that you select **Embed & Sign** instead of **Embed**.
 
@@ -115,38 +115,101 @@ You can save `.framework` files under your project folder, as follows:
 ```
 
 
+<!--
+## 调用流程
 
-<!--## 调用流程
+本节介绍插件相关接口的调用流程。接口的参数解释详见[接口说明](云上曲率实时音视频审核插件接口说明.md)。
 
-本节介绍插件相关接口的调用流程。接口的参数解释详见[接口说明]()。-->
-
-## Call Sequence
-This section describes the call sequence you implement to use LiveData RTVT features in your app.
-
-<!--### 1. 启用插件
+### 1. 启用插件
 
 **Android**
-初始化声网 `AgoraRtcEngine` 时，需要先调用`addExtension`加载插件，再调用 `enableExtension` 启用插件。
+初始化声网 `AgoraRtcEngine` 时，调用 `enableExtension` 启用插件。
 
 ```java
-    RtcEngineConfig config = new RtcEngineConfig();
-    config.addExtension("agora-iLiveData-filter");
+    config.addExtension(iLiveData);
     engine = RtcEngine.create(config);
-    engine.enableExtension("iLiveData", "RTVT", true);
+    engine.enableExtension("iLiveData", "RTAU", true);
 ```
 
 **iOS**
-初始化声网 `AgoraRtcEngine` 时，调用 `enableExtensionWithVendor` 启用插件。
+初始化声网 `AgoraRtcEngineKit` 时，调用 `enableExtensionWithVendor` 启用插件。
+
 
 ```objective-c
-   AgoraRtcEngineConfig *config = [AgoraRtcEngineConfig new];
-
-   // 设置 config.eventDelegate = self 接受翻译识别结果
-   // 开启RTVT插件
+   // 启用RTAU插件
    [_agoraKit enableExtensionWithVendor:[iLiveDataSimpleFilterManager companyName]
-                             extension:[iLiveDataSimpleFilterManager plugName]
-                             enabled:YES]；
-```-->
+                              extension:[iLiveDataSimpleFilterManager rtau_plugName]
+                                enabled:YES]；
+```
+
+### 2. 使用插件
+
+**Android**
+调用`setExtensionProperty` 指定key 为 `startAudit` 在value中以json格式传入`appkey` `appsecret`等参数。
+
+```java
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("appKey", "appKey");
+    jsonObject.put("appSecret", "appSecret");
+    jsonObject.put("streamId", "streamId");
+    jsonObject.put("audioLang", "zh-CN");
+    jsonObject.put("callbackUrl", "");
+```
+
+
+```java
+    engine.setExtensionProperty("iLiveData", "RTAU", "startAudit", jsonObject.toString());
+```
+
+
+
+**iOS**
+调用`setExtensionPropertyWithVendor`指定 key 为 `startAudit` 在value中以json格式传入`appkey` `appsecret`等参数。
+
+```objective-c
+     NSDictionary * auditDic = @{
+                                @"appKey":@"appKey",
+                                @"appSecret":@"appSecret",
+                                @"streamId":@"streamId",
+                                @"audioLang":@"zh-CN",
+                                @"callbackUrl":@"callbackUrl"
+                               };
+
+     NSData * auditDicJsonData = [NSJSONSerialization dataWithJSONObject:auditDic options:NSJSONWritingPrettyPrinted error:nil];
+     NSString * auditDicJsonString = [[NSString alloc] initWithData:auditDicJsonData encoding:NSUTF8StringEncoding];
+
+     [_agoraKit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
+                                     extension:[iLiveDataSimpleFilterManager rtau_plugName])
+                                           key:@"startAudit"
+                                         value:auditDicJsonString];
+```
+
+
+
+
+### 3. 结束使用插件
+
+**Android**
+调用 `setExtensionProperty`方法并指定 key 为 `closeAudit` 来结束实时音视频审核插件的使用。
+
+```java
+    engine.setExtensionProperty("iLiveData", "RTAU", "closeAudit", "{}");
+```
+
+**iOS**
+调用 `setExtensionPropertyWithVendor`方法并指定 key 为 `closeAudit` 来结束实时音视频审核插件的使用。
+
+```objective-c
+    [self.kit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
+                                   extension:[iLiveDataSimpleFilterManager rtau_plugName]
+                                         key:"closeAudit"
+                                       value:"end"];
+```
+-->
+
+## Call sequence
+This section describes the call sequence you implement to use LiveData RTAU features in your app.
+
 ### 1. Enable the extension
 
 #### Android
@@ -155,217 +218,93 @@ When you initialize `AgoraRtcEngine` :
 - then call `enableExtension` to enable the extension
 
 ```java
-RtcEngineConfig config = new RtcEngineConfig();
-config.addExtension("agora-iLiveData-filter");
+config.addExtension(iLiveData);
 engine = RtcEngine.create(config);
-engine.enableExtension("iLiveData", "RTVT", true);
+engine.enableExtension("iLiveData", "RTAU", true);
 ```
-
 
 #### iOS
-When you initialize `AgoraRtcEngine`, call `enableExtensionWithVendor` to enable the extension.
+When you initialize `AgoraRtcEngineKit`, call `enableExtensionWithVendor` to enable the extension.
 
 ```objective-c
-AgoraRtcEngineConfig *config = [AgoraRtcEngineConfig new];
-
-// set config.eventDelegate = self to accept the `onEvent` callback
-// enable RTVT extension
+// enable RTAU extension
 [_agoraKit enableExtensionWithVendor:[iLiveDataSimpleFilterManager companyName]
-                          extension:[iLiveDataSimpleFilterManager plugName]
+                          extension:[iLiveDataSimpleFilterManager rtau_plugName]
                             enabled:YES]；
 ```
-
-
-<!--### 2. 使用插件
-
-**Android**
-调用`setExtensionProperty` 指定 key 为 `startAudioTranslation` 在value中以json格式传入`appkey` `appsecret`等参数
-
-```java
-    JSONObject jsonObject = new JSONObject();
-    jsonObject.put("appKey", "appKey");
-    jsonObject.put("appSecret", "appSecrect");
-    jsonObject.put("srclang", "zh");
-    jsonObject.put("dstLang", "en");
-
-    engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "startAudioTranslation", jsonObject.toString());
-```
-
-**iOS**
-调用`setExtensionPropertyWithVendor`，指定 key 为 `startAudioTranslation` 并在 value 中传入 `appKey` 和 `appSecret` 等参数。
-
-```objective-c
-   NSDictionary * translateDic = @{
-                                   @"appKey":@"appKey",
-                                   @"appSecret":@"appSecret",
-                                   @"srcLanguage":@"zh",
-                                   @"destLanguage":@"en"
-                                  };
-
-     NSData * translateDicJsonData = [NSJSONSerialization dataWithJSONObject:translateDic options:NSJSONWritingPrettyPrinted error:nil];
-     NSString * translateDicJsonString = [[NSString alloc] initWithData:translateDicJsonData encoding:NSUTF8StringEncoding];
-
-     [_agoraKit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
-                                     extension:[iLiveDataSimpleFilterManager rtvt_plugName])
-                                           key:@"startAudioTranslation"
-                                         value:translateDicJsonString];
-```
--->
 
 ### 2. Start using the extension
 
 #### Android
 
-When you are ready to start using RTVT, call `setExtensionProperty` and pass in the corresponding keys and values:
-- set key as`startAudioTranslation`
-- set value as `appkey`, `appsecret`, `srclang`, `dstLang` in JSON
+When you are ready to start using RTAU, call `setExtensionProperty` and pass in the corresponding keys and values:
+- set key as`startAudit`
+- set value as `appkey`, `appsecret`, `streamId`, `audioLang`, `callbackUrl` in JSON
 
 ```java
 JSONObject jsonObject = new JSONObject();
 jsonObject.put("appKey", "appKey");
-jsonObject.put("appSecret", "appSecrect");
-jsonObject.put("srclang", "zh");
-jsonObject.put("dstLang", "en");
-
-engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "startAudioTranslation", jsonObject.toString());
+jsonObject.put("appSecret", "appSecret");
+jsonObject.put("streamId", "streamId");
+jsonObject.put("audioLang", "zh-CN");
+jsonObject.put("callbackUrl", "");
 ```
 
 #### iOS
 
-When you are ready to start using RTVT, call `setExtensionPropertyWithVendor` and pass in the corresponding keys and values:
-- set key as`startAudioTranslation`
-- set value as `appkey`, `appsecret`,`srclang` `dstLang` in JSON
+When you are ready to start using RTAU, call `setExtensionPropertyWithVendor` and pass in the corresponding keys and values:
+- set key as`startAudit`
+- set value as`appkey`, `appsecret`, `streamId`, `audioLang`, `callbackUrl` in JSON
 
 ```objective-c
-NSDictionary * translateDic = @{
-                                @"appKey":@"appKey",
-                                @"appSecret":@"appSecret",
-                                @"srcLanguage":@"zh",
-                                @"destLanguage":@"en"
-                              };
+NSDictionary * auditDic = @{
+                           @"appKey":@"appKey",
+                           @"appSecret":@"appSecret",
+                           @"streamId":@"streamId",
+                           @"audioLang":@"zh-CN",
+                           @"callbackUrl":@"callbackUrl"
+                          };
 
-NSData * translateDicJsonData = [NSJSONSerialization dataWithJSONObject:translateDic options:NSJSONWritingPrettyPrinted error:nil];
-NSString * translateDicJsonString = [[NSString alloc] initWithData:translateDicJsonData encoding:NSUTF8StringEncoding];
+NSData * auditDicJsonData = [NSJSONSerialization dataWithJSONObject:auditDic options:NSJSONWritingPrettyPrinted error:nil];
+NSString * auditDicJsonString = [[NSString alloc] initWithData:auditDicJsonData encoding:NSUTF8StringEncoding];
 
 [_agoraKit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
-                                extension:[iLiveDataSimpleFilterManager rtvt_plugName])
-                                      key:@"startAudioTranslation"
-                                    value:translateDicJsonString];
+                                extension:[iLiveDataSimpleFilterManager rtau_plugName])
+                                      key:@"startAudit"
+                                    value:auditDicJsonString];
 ```
-
-
-
-<!--### 3. 结束使用插件
-
-**Android**
-调用 `setExtensionProperty`方法并指定 key 为 `closeAudioTranslation` 来结束曲率识别和翻译插件的使用。
-
-```java
-    engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "closeAudioTranslation", "{}");
-```
-
-
-**iOS**
-调用 `setExtensionPropertyWithVendor`方法并指定 key 为 `closeAudioTranslation` 来结束曲率识别和翻译插件的使用。
-
-```objective-c
-   [_agoraKit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
-                                    extension:[iLiveDataSimpleFilterManager rtvt_plugName]
-                                          key:"closeAudioTranslation"
-                                        value:"end"];
-```
--->
 
 ### 3. Stop using the extension
 
 #### Android
 
-When stop using RTVT, call `setExtensionProperty` and pass in the corresponding keys and values:
-- set key as`closeAudioTranslation`
+When stop using RTAU, call `setExtensionProperty` and pass in the corresponding keys and values:
+- set key as`closeAudit`
 - set value as `end`
 
 ```java
-engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "closeAudioTranslation", "end");
+engine.setExtensionProperty("iLiveData", "RTAU", "closeAudit", "end");
 ```
 
 #### iOS
 
-When stop using RTVT, call `setExtensionPropertyWithVendor` and pass in the corresponding keys and values:
-- set key as`closeAudioTranslation`
+When stop using RTAU, call `setExtensionPropertyWithVendor` and pass in the corresponding keys and values:
+- set key as`closeAudit`
 - set value as `end`
 
 ```objective-c
-[_agoraKit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
-                                extension:[iLiveDataSimpleFilterManager rtvt_plugName]
-                                      key:"closeAudioTranslation"
-                                    value:"end"];
+[self.kit setExtensionPropertyWithVendor:[iLiveDataSimpleFilterManager companyName]
+                               extension:[iLiveDataSimpleFilterManager rtau_plugName]
+                                     key:"closeAudit"
+                                   value:"end"];
 ```
 
-
-<!--### 4. 识别和翻译结果回调
-
-**Android**
-初始化成功后，曲率识别及翻译插件会通过 `onEvent` 回调返回识别结果。识别结果的含义详见 `onEvent` 回调。
-
-```java
-@Override
-public void onEvent(String vendor, String extension, String key, String value) {
-    key: "recognizeResult"识别结果标识  "translateResult"翻译结果标识
-      value: 对应key分别为 识别结果 和 翻译结果
-}
-```
-
-**iOS**
-初始化成功后，曲率识别及翻译插件会通过 `onEvent` 回调返回识别结果。识别结果的含义详见 onEvent 回调。
-
-
-```objective-c
--(void)onEvent:(NSString *)provider extension:(NSString *)extension key:(NSString *)key value:(NSString *)value{
-
-       provider:"iLiveData"
-      extension:"RTVT"
-            key: "recognizeResult"识别结果标识  "translateResult"翻译结果标识
-          value: 对应key分别为 识别结果 和 翻译结果
-
-}
-```
--->
-
-### 4. Result callback
-
-LiveData RTVT extension provides result of voice transcription and translation, you can receive all return of results or either of them, using `onEvent` callback of the Agora SDK.
-
-#### Android
-
-After enable LiveData RTVT extension， you can receive the results of voice transcription and translation via `onEvent` callback. The description of `onEvent` callback keys can be seen below.
-
-```java
-@Override
-public void onEvent(String vendor, String extension, String key, String value) {
-        key: "recognizeResult"  "translateResult"
-      value:
-}
-```
-#### iOS
-After enable LiveData RTVT extension， you can receive the results of voice transcription and translation via `onEvent` callback. The description of `onEvent` callback keys can be seen below.
-
-```objective-c
--(void)onEvent:(NSString *)provider extension:(NSString *)extension key:(NSString *)key value:(NSString *)value{
-
-       provider:"iLiveData"
-      extension:"RTVT"
-            key: "recognizeResult"  "translateResult"
-          value:
-}
-```
-
-<!--
-## 示例项目
+<!--## 示例项目
 
 | 平台    | 语言        | 示例项目                                                     |
 | :------ | :---------- | :----------------------------------------------------------- |
-| Android | Java        | [项目示例](https://github.com/highras/rtvt-agora-marketplace) |
-| iOS     | Objective-C | [项目示例](https://github.com/highras/rtvt-agora-marketplace) |
+| Android | Java        | [项目示例](https://github.com/highras/rtau-agora-marketplace) |
+| iOS     | Objective-C | [项目示例](https://github.com/highras/rtau-agora-marketplace) |
 
 ### 运行步骤
 
@@ -375,7 +314,7 @@ After enable LiveData RTVT extension， you can receive the results of voice tra
   ```shell
 	git clone （//TODO: 仓库链接）
   ```
-2. 从[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载曲率识别及翻译插件的 Android 插件包。解压后，将所有 `.aar` 文件保存到 `（TODO:具体路径） ` 。
+2. 从[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载实时音视频审核插件的 Android 插件包。解压后，将所有 `agora-iLiveData-filter.so` 文件保存到 `（TODO:具体路径） ` 。
 3. 在 Android Studio 中打开示例项目 `（TODO: 工程文件的路径）`。
 4. 将项目与 Gradle 文件同步。
 5. 打开 `（TODO: 文件的具体路径）`，进行如下修改：
@@ -392,37 +331,42 @@ After enable LiveData RTVT extension， you can receive the results of voice tra
   ```
 4. 连接一台 Android 真机（非模拟器），运行项目。
 
-
 **iOS**
-1. 从[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载曲率识别及翻译插件的 iOS 插件包。解压后，将所有 `.framwork` 库文件保存到 `（TODO: 具体路径）` 。
-2. 将 iLiveData_Agora.framework 拖入项目。
-3. 项目设置 在TARGETS->Build Settings->Other Linker Flags （选中ALL视图）中添加-ObjC，字母O和C大写，符号“-”请勿忽略。
-4. 静态库中采用Objective-C++实现，因此需要您保证您工程中至少有一个.mm后缀的源文件( 您可以将任意一个.m后缀的文件改名为.mm )。
-5. 打开 `（TODO: 文件的具体路径）`，进行如下修改：
+
+1. 克隆仓库：
+  ```shell
+	git clone （//TODO: 仓库链接）
+  ```
+2. 从[声网云市场下载](https://docs.agora.io/cn/extension_customer/downloads?platform=All%20Platforms)页面下载实时音视频审核插件的 iOS 插件包。解压后，将所有 `.framwork` 库文件保存到 `（TODO: 具体路径）` 。
+3. 在 Xcode 中打开项目 `（TODO: 工程文件的路径）`。
+4. 打开 `（TODO: 文件的具体路径）`，进行如下修改：
 	- 将 `<YOUR_APP_ID>` 替换为你的 App ID。获取 App ID 请参考[开始使用 Agora 平台](https://docs.agora.io/cn/Agora%20Platform/get_appid_token?platform=All%20Platforms)。
 	- 将 `<YOUR_APP_KEY>` 和 `<YOUR_APP_SECRET>` 分别替换为你的 `appKey` 和 `appSecret`。获取方式详见[购买和激活插件](https://docs.agora.io/cn/extension_customer/get_extension?platform=All%20Platforms)。
-5. 执行 初始化 + 启用插件 步骤
-6. 连接一台 iOS 真机（非模拟器），运行项目。
 
-
-
+  ```objective-c
+  // TODO: 替换成你的插件对应的代码
+  NSString *const appID = @"<YOUR_APP_ID>";
+  NSString *const appkey = @"<YOUR_APP_KEY>";
+  NSString *const secret = @"<YOUR_SECRET>";
+  ```
+5. 连接一台 iOS 真机（非模拟器），运行项目。
 
 ### 预期效果
 
 运行成功后，示例项目会安装到你的 Android 或 iOS 设备上。
 
-1. 启动 app，你可以在界面上看到 `disableExtension` 和 `Start ASR` 按钮
-2. 点击 `Start RTVT` 开始语音识别。
-3. 点击 `End ASR` 结束语音识别。
+1. 启动 app，你可以在界面上看到 `add room` 和 `Start RTAU` 按钮
+2. 点击 `add room` 进入房间。
+3. 点击 `Start RTAU` 开始实时音视频审核。
+4. 点击 `End Audit` 结束实时音视频审核。
 -->
-
 ## Sample Project
 
 The complete sample code and project is provided on GitHub:
 | Platform    | Language    | Sample Project   |
 | :------ | :---------- | :--------------|
-| Android | Java        | [Sample Project](https://github.com/highras/rtvt-agora-marketplace/blob/master/Android/RTVTRTAUFilter/app/src/main/java/io/agora/api/example/MainActivity.java) |
-| iOS     | Objective-C | [Sample Project](https://github.com/highras/rtvt-agora-marketplace/tree/master/iOS/SW_Test/SW_Test.xcworkspace) |
+| Android | Java        | [Sample Project](https://github.com/highras/rtau-agora-marketplace) |
+| iOS     | Objective-C | [Sample Project](https://github.com/highras/rtau-agora-marketplace) |
 
 ### Run the project
 
@@ -430,20 +374,21 @@ The complete sample code and project is provided on GitHub:
 
 1. git clone:
 ```shell
-git clone https://github.com/highras/rtvt-agora-marketplace.git
+git clone https://github.com/highras/rtau-agora-marketplace.git
 ```
 2. Open the Sample project in Android Studio.
 3. Gradle sync with the project.
 4. Open `app/src/main/res/values/string_configs.xml` file:
     - change `agora_app_id` and `agora_access_token` to your own Agora project information.
-    - change `livedata_translate_pid` and `livedata_translate_key` to your own LiveData RTVT extension information。
+    - change `livedata_audit_pid` and `livedata_audit_key` to your own LiveData RTAU extension information。
+    - change `livedata_callbackUrl` to your own destination URL to receive the moderation result from callback.
 5. Using a physical Android device (not an emulator) to run the project.
 
 #### iOS
 
 1. git clone:
 ```shell
-git clone https://github.com/highras/rtvt-agora-marketplace.git
+git clone https://github.com/highras/rtau-agora-marketplace.git
 ```
 2. Open the project in Xcode. Access to the `iOS/SW_Test` path, and run the CocoaPods command as below:
 ```shell
@@ -451,22 +396,27 @@ pod install
 ```
 3. Open the sample project `SW_Test.xcworkspace` in Xcode.
 4. Open `iOS/SW_Test/SW_Test/ViewController.mm` file:
-    - Fill in you own project information `appId` and `Token` from Agora console.
-    - Fill in your own LiveData RTVT extension information `appKeyRTVT` and `appSecretRTVT` from Agora console。
+    - Fill in you own project information `appId`, `Token` and `RoomId` from Agora console.
+    - Fill in your own LiveData RTAU extension information `appKeyRTAU` and `appSecretRTAU` from Agora console。
+    - Fill in your own destination URL `callbackUrl` to receive the moderation result from callback。
 5. Using a physical iOS device (not an emulator) to run the project.
 
 ### Result
 
-After running the project successfully, LiveData RTVT sample project will be installed on you Android or iOS device.
+After running the project successfully, LiveData RTAU sample project will be installed on you Android or iOS device.
 
 1. Start the sample, fill in the channel number in the input box and click `Join`. The button `Join` will be change to `Leave` after join the channel successfully.
-2. Click the button `start translation`, speak to the device microphone, and you will see the real-time transcription and translation on the screen.
-3. Click the button `stop translation` to stop transcription and translation.
-4. Click the button `stop`to stop running LiveData RTVT sample project.
+2. Click the button `start Audit`, you will see the real-time video on the screen shoot by the device camera.
+3. Click the button `end Audit` to stop audit.
+
+The result fo real-time video moderation can be checked through destination URL fiiled in the sample.
+If you don't have backend to receive the moderation result, you can cheke from LiveData console. Please contact us via Agora to get the address.
 
 
+<!--## 接口说明
+
+插件所有相关接口的参数解释详见（[接口说明]()）。-->
 ## API reference
-
 This section lists the APIs related to using extensions with the Agora SDK.
 
 ### Android
@@ -474,7 +424,6 @@ This section lists the APIs related to using extensions with the Agora SDK.
 - [addExtension](https://api-ref.agora.io/en/video-sdk/android/4.x/API/rtc_api_data_type.html#api_irtcengine_addextension) in the `RtcEngineConfig` class
 - [enableExtension](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengine.html#api_irtcengine_enableextension) in the `RtcEngine` class
 - [setExtensionProperty](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) in the `RtcEngine` class
-- [getExtensionProperty](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengine.html#api_irtcengine_getextensionproperty) in the `RtcEngine` class
 - [onEvent](https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_imediaextensionobserver.html#callback_irtcengineeventhandler_onextensionevent) in the `IMediaExtensionObserver` class
 
 
@@ -482,55 +431,34 @@ This section lists the APIs related to using extensions with the Agora SDK.
 
 - [enableExtensionWithVendor](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_irtcengine.html#api_irtcengine_enableextension) in the `AgoraRtcEngineKit` class
 - [setExtensionPropertyWithVendor](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_irtcengine.html#api_irtcengine_setextensionproperty) in the `AgoraRtcEngineKit` class
-- [getExtensionPropertyWithVendor](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_irtcengine.html#api_irtcengine_getextensionproperty) in the `AgoraRtcEngineKit` class
 - [onEvent](https://api-ref.agora.io/en/video-sdk/ios/4.x/API/class_imediaextensionobserver.html#callback_irtcengineeventhandler_onextensionevent) in the `AgoraMediaFilterEventDelegate` class
 
 ### Key description
-To implement the LiveData RTVT extension in app, you need to pass in the corresponding key-value pair。
+To implement the LiveData RTAU extension in app, you need to pass in the corresponding key-value pair。
 
 #### `setExtensionProperty` or `setExtensionPropertyWithVendor`
 When calling `setExtensionProperty` or `setExtensionPropertyWithVendor`, you can pass keys:
 
 | Key    | Description  |
 | ------ | ---------- |
-| [startAudioTranslation]() | start real-time voice transcription and translation   |
-| [closeAudioTranslation]()     | stop real-time voice transcription and translation |
+| [startAudit]() | start real-time video moderation   |
+| [closeAudit]()     | stop real-time video moderation |
 
 #### `onEvent`
-The Agora SDK `onEvent` contain keys:
-
-| Key    | Description  |
-| ------ | ---------- |
-| [recognizeResult]() | result of real-time voice transcription   |
-| [translateResult]()    | result of real-time voice translation |
-| [start]()   | error message when calling `startAudioTranslation`  |
+The Agora SDK `onEvent` contain error messages. For more details, please check [error code](https://docs.ilivedata.com/rtm/excursus/error-code/)
 
 ### Key-value description
 
-#### startAudioTranslation
+#### startAudit
 | Value    | Description  |
 | ------ | ---------- |
 | appKey | buy and activate the extension project on Agora Console, then click View in the Secret column   |
 | appSecret    | buy and activate the extension project on Agora Console, then click View in the Secret column. |
-| srcLanguage   | source language，local language    |
-| destLanguage   | destination language，translate language   |
+| streamId   | real-time video streaming ID generated by the business  |
+| audioLang   | language in real-time video streaming. It can be recognized automaticly by LiveData if pass null     |
+| callbackUrl   | destination URL address.<br> The moderation result will be POST to the URL address using HTTP request.<br> By default, the moderation result will be callback only if various risky contents are recognized. <br> The moderation result value can be checked on [Image Moderation](https://docs.ilivedata.com/en/imagecheck/techdocs/respon/), [Audio Moderation](https://docs.ilivedata.com/en/audiocheck/callbackdoc/result-callback/).   |
 
-#### closeAudioTranslation
+#### closeAudit
 | Value    | Description  |
 | ------ | ---------- |
-| end | stop real-time voice transcription and translation  |
-
-#### recognizeResult
-| Value    | Description  |
-| ------ | ---------- |
-| recognizeResult | result of real-time voice transcription  |
-
-#### translateResult
-| Value    | Description  |
-| ------ | ---------- |
-| translateResult | result of real-time voice translation  |
-
-#### start
-| Value    | Description  |
-| ------ | ---------- |
-| start | error message when calling `startAudioTranslation`  |
+| end | optional parameter, stop real-time video moderation optional parameters |
