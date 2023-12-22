@@ -23,7 +23,7 @@ The LiveData RTAU extension encapsulates the core APIs of the LiveData RTAU SDK.
   - 运行 Android 5.0 或以上版本的真机（非模拟器）。
 - iOS 开发环境需满足以下要求：
   - Xcode 9.0 或以上版本。
-  - 运行 iOS 9.0 或以上版本的真机（非模拟器）。
+  - 运行 iOS 11.0 或以上版本的真机（非模拟器）。
 -->
 ## Prerequisites
 The development environment has to meet the following requirements:
@@ -32,7 +32,7 @@ The development environment has to meet the following requirements:
   - A physical device (not an emulator) running Android 5.0 or later
 - iOS
   - Xcode 9.0 or later.
-  - A physical device (not an emulator) running iOS 9.0 or later.
+  - A physical device (not an emulator) running iOS 11.0 or later.
 
 
 <!--

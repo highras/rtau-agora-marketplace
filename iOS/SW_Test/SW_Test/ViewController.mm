@@ -33,12 +33,12 @@
     [super viewDidLoad];
 
     
-    //翻译识别
+    //translation
     self.appKeyRTVT = @"";
     self.appSecretRTVT = @"";
     
     
-    //审核
+    //audit
     self.appKeyRTAU = @"";
     self.appSecretRTAU = @"";
     self.callbackUrl = @"";//Callback address for receiving audit results
@@ -105,30 +105,36 @@
 -(void)_startRtvtButtonClick{
     
 
-        NSDictionary * translateDic = @{@"appKey":self.appKeyRTVT,
-                                        @"appSecret":self.appSecretRTVT,
-                                        @"srcLanguage":@"zh",
-                                        @"destLanguage":@"en"
-                                        
-        };
+    NSDictionary * translateDic = @{@"appKey":self.appKeyRTVT,
+                                    @"appSecret":self.appSecretRTVT,
+                                    @"srcLanguage":@"zh",
+                                    @"destLanguage":@"en",
+                                    @"srcAltLanguage":@[],
+                                    
+                                    
+                                    // @"asrResult":@(YES),      Recognition result switch  The default YES is not passed
+                                    // @"transResult":@(YES),    Translation result switch  The default YES is not passed
+                                    // @"asrTempResult":@(NO),  Recognition tmp result switch  The default NO is not passed
+    };
+    
         
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:translateDic options:NSJSONWritingPrettyPrinted error:nil];
-        NSString * jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:translateDic options:NSJSONWritingPrettyPrinted error:nil];
+    NSString * jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    BOOL start_audio_translate_result = [self _setProperty:@"startAudioTranslation" value:jsonStr type:0];
+    
+    
+    if (  start_audio_translate_result == 0 ) {
         
-        BOOL start_audio_translate_result = [self _setProperty:@"startAudioTranslation" value:jsonStr type:0];
+        NSLog(@"Start the plug-in successfully");
+        [self.startRtvtButton setTitle:@"End RTVT" forState:UIControlStateNormal];
+        [self.startRtvtButton addTarget:self action:@selector(_endRtvtButtonClick) forControlEvents:UIControlEventTouchUpInside];
         
+    }else{
         
-        if (  start_audio_translate_result == 0 ) {
-            
-            NSLog(@"Start the plug-in successfully");
-            [self.startRtvtButton setTitle:@"End RTVT" forState:UIControlStateNormal];
-            [self.startRtvtButton addTarget:self action:@selector(_endRtvtButtonClick) forControlEvents:UIControlEventTouchUpInside];
-            
-        }else{
-            
-            NSLog(@"Failed to start plug-in");
-            
-        }
+        NSLog(@"Failed to start plug-in");
+        
+    }
         
     
     
@@ -211,6 +217,22 @@
     NSLog(@"onEvent  %@   %@  %@   %@",provider,extension,key,value);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        
+        //NSDictionary * dic = @{@"startTs":@(startTs),@"endTs":@(endTs),@"result":result,@"recTs":@(recTs)};
+        NSError * error;
+        NSData *jsonData = [value dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary * dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                            options:NSJSONReadingMutableContainers error:&error];
+        if(error == nil){
+            
+    //        [[dic objectForKey:@"startTs"] longLongValue];
+    //        [[dic objectForKey:@"endTs"] longLongValue];
+    //        [dic objectForKey:@"result"];//nsstring
+    //        [[dic objectForKey:@"recTs"] longLongValue];
+
+        }
+        
         
         if ([key isEqualToString:@"recognizeResult"]) {
             
