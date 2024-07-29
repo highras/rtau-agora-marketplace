@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -41,17 +40,19 @@ import io.agora.rtc2.video.VideoCanvas;
 
 public class SimpleExtension extends AppCompatActivity implements View.OnClickListener, io.agora.rtc2.IMediaExtensionObserver {
     private static final String TAG = SimpleExtension.class.getSimpleName();
-    public static final String EXTENSION_NAME = "agora-iLiveData-filter"; // Name of target link library used in CMakeLists.txt
-    public static final String EXTENSION_VENDOR_NAME = "iLiveData"; // Provider name used for registering in agora-bytedance.cpp
-    public static final String EXTENSION_VIDEO_FILTER_WATERMARK = "RTAU"; // Video filter name defined in LiveDataExtensionProvider.h
-    public static final String EXTENSION_AUDIO_FILTER_VOLUME = "RTVT"; // Audio filter name defined in LiveDataExtensionProvider.h
+    public static final String EXTENSION_LIBRARY_NAME_PRE = "agora-iLiveData-filter-pre";
+    public static final String EXTENSION_VENDOR_NAME_PRE = "iLiveDataPre";
+    public static final String EXTENSION_RTVT_PRE = "RTVT_PRE";
+    public static final String EXTENSION_RTAU_PRE = "RTAU_PRE";
+
     private FrameLayout local_view;
     private EditText et_channel;
     private Button join;
     private RtcEngine engine;
-    private int myUid;
+    private int myUid = 789;
+    int remoteUid = 999;
+    String joinchannel = "";
     private boolean joined = false;
-    private SeekBar record;
     ListView rtvttestview;
     Context mycontext = this;
     protected Handler handler;
@@ -92,13 +93,9 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
 
         findViewById(R.id.startaudit).setOnClickListener(this);
         findViewById(R.id.closeAudit).setOnClickListener(this);
-        findViewById(R.id.starttrans).setOnClickListener(this);
-        findViewById(R.id.stoptrans).setOnClickListener(this);
 
         et_channel = findViewById(R.id.et_channel);
         findViewById(R.id.btn_join).setOnClickListener(this);
-        record = findViewById(R.id.recordingVol);
-        record.setEnabled(false);
         local_view = findViewById(R.id.fl_local);
         rtvttestview = findViewById(R.id.rtvttest);
         srcadapter = new MyAdapter(this, android.R.layout.simple_list_item_1, srcarrayList);
@@ -139,44 +136,18 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                 showAlert("Please configure the agora appid");
                 return;
             }
-            /** Sets the channel profile of the Agora RtcEngine.
-             CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile.
-             Use this profile in one-on-one calls or group calls, where all users can talk freely.
-             CHANNEL_PROFILE_LIVE_BROADCASTING(1): The Live-Broadcast profile. Users in a live-broadcast
-             channel have a role as either broadcaster or audience. A broadcaster can both send and receive streams;
-             an audience can only receive streams.*/
             config.mChannelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING;
-            /**
-             * IRtcEngineEventHandler is an abstract class providing default implementation.
-             * The SDK uses this class to report to the app on SDK runtime events.
-             */
-            //Name of dynamic link library is provided by plug-in vendor,
-            //e.g. libagora-bytedance.so whose EXTENSION_NAME should be "agora-bytedance"
-            //and one or more plug-ins can be added
-            config.addExtension(EXTENSION_NAME);
+            int ret = 0;
+
+            config.addExtension(EXTENSION_LIBRARY_NAME_PRE);
+
             config.mExtensionObserver = this;
             config.mEventHandler = iRtcEngineEventHandler;
             engine = RtcEngine.create(config);
-            /**
-             * Enable/Disable extension.
-             *
-             * @param id id for extension, e.g. agora.beauty.
-             * @param enable enable or disable.
-             * - true: enable.
-             * - false: disable.
-             *
-             * @return
-             * - 0: Success.
-             * - < 0: Failure.
-             */
-            int ret = engine.enableExtension(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, true);
-            // enable video filter before enable video
-
-            Log.i("sdktest", "ret is " + ret);
-            ret = engine.enableExtension(EXTENSION_VENDOR_NAME, EXTENSION_VIDEO_FILTER_WATERMARK, true);
-            // enable video filter before enable video
-
-            Log.i("sdktest", "ret is " + ret);
+            if (engine == null) {
+                Log.e("sdktest", "engine is null");
+                return;
+            }
 
             if (!AndPermission.hasPermissions(this, Permission.Group.STORAGE, Permission.Group.MICROPHONE, Permission.Group.CAMERA)) {
 
@@ -187,6 +158,17 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                         Permission.Group.CAMERA
                 ).onGranted(permissions ->
                 {
+                    int result = engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTVT_PRE, true);
+                    if (result <0){
+                        showAlert("enableExtension error:" +result + " " + EXTENSION_RTVT_PRE );
+                        return;
+                    }
+                    result = engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTAU_PRE, true);
+                    if (result <0){
+                        showAlert("enableExtension error:" +result + " " + EXTENSION_RTAU_PRE );
+                        return;
+                    }
+
                     engine.enableVideo();
                     TextureView textureView = new TextureView(this);
                     if(local_view.getChildCount() > 0)
@@ -201,6 +183,17 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                 }).start();
             }
             else{
+                int result = engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTVT_PRE, true);
+                if (result <0){
+                    showAlert("enableExtension error:" +result + " " + EXTENSION_RTVT_PRE );
+                    return;
+                }
+                result = engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTAU_PRE, true);
+                if (result <0){
+                    showAlert("enableExtension error:" +result + " " + EXTENSION_RTAU_PRE );
+                    return;
+                }
+
                 engine.enableVideo();
                 TextureView textureView = new TextureView(this);
                 if(local_view.getChildCount() > 0)
@@ -211,16 +204,13 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                 engine.setupLocalVideo(new VideoCanvas(textureView, RENDER_MODE_HIDDEN, 0));
                 engine.startPreview();
             }
-
-
-
-//            initMediaPlayer();
         }
         catch (Exception e) {
             e.printStackTrace();
             this.onBackPressed();
         }
     }
+
 
 
     protected void showAlert(String message) {
@@ -243,50 +233,7 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        Class obj = null;
-        if (v.getId() == R.id.starttrans) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-//                    Log.i("sdktest", "java token is " + ApiSecurityExample.genToken(80001000,"qwerty"));
-                String spid  = getString(R.string.livedata_translate_pid);
-                if (spid.isEmpty()){
-                    showAlert("Please configure the project ID for real-time translation");
-                    return;
-                }
-                long pid = Long.parseLong(spid);
-
-                String skey  = getString(R.string.livedata_translate_key);
-                if (skey.isEmpty()){
-                    showAlert("Please configure the key for real-time translation");
-                    return;
-                }
-
-                jsonObject.put("srclang", livedata_translate_srclang);
-                jsonObject.put("dstLang", livedata_translate_dstlang);
-
-                jsonObject.put("asrResult", true);
-                jsonObject.put("asrTempResult", false);
-                jsonObject.put("transResult", true);
-                jsonObject.put("appKey", livedata_translate_pid);
-                jsonObject.put("appSecret", livedata_translate_key);
-                jsonObject.put("userId", "1234567");
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            int ret  = engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "startAudioTranslation", jsonObject.toString());
-            if (ret < 0){
-                showAlert("startAudioTranslation error ret:" + ret);
-                return;
-            }
-            Toast.makeText(this, "Start Translation", Toast.LENGTH_SHORT).show();
-        }
-        else if (v.getId() == R.id.stoptrans){
-            Toast.makeText(this, "Stop Translation", Toast.LENGTH_SHORT).show();
-            engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, "closeAudioTranslation", "{}");
-        }
-        else if (v.getId() == R.id.startaudit){
-
+        if (v.getId() == R.id.startaudit){
             String spid  = getString(R.string.livedata_audit_pid);
             if (spid.isEmpty()){
                 showAlert("Please configure the project ID for audit");
@@ -311,7 +258,7 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            int ret = engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_VIDEO_FILTER_WATERMARK, "startAudit", jsonObject.toString());
+            int ret = engine.setExtensionProperty(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTAU_PRE, "startAudit_pre", jsonObject.toString());
             if (ret != 0 ){
                 showAlert("setExtensionProperty startAudit error " + ret);
                 return;
@@ -320,9 +267,9 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
             Log.i("sdktest","Start Audit " + ret);
         }
         else if (v.getId() == R.id.closeAudit){
-            Toast.makeText(this, "End Audit", Toast.LENGTH_SHORT).show();
-            int ret = engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_VIDEO_FILTER_WATERMARK, "closeAudit", "{}");
-            Log.i("sdktest","setExtensionProperty closeAudit " + ret);
+/*            Toast.makeText(this, "End Audit", Toast.LENGTH_SHORT).show();
+            int ret = engine.setExtensionProperty(EXTENSION_VENDOR_NAME, EXTENSION_VIDEO_FILTER_WATERMARK, "closeAudit_pre", "{}");
+            Log.i("sdktest","setExtensionProperty closeAudit " + ret);*/
         }
         else if (v.getId() == R.id.btn_join) {
             if (engine == null){
@@ -368,8 +315,6 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
                  *          triggers the removeInjectStreamUrl method.*/
                 engine.leaveChannel();
                 join.setText(getString(R.string.join));
-                record.setEnabled(false);
-                record.setProgress(0);
             }
         }
     }
@@ -379,12 +324,14 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
     public void onDestroy() {
         super.onDestroy();
         /**leaveChannel and Destroy the RtcEngine instance*/
+        if (engine == null)
+            return;
         if (engine != null) {
             engine.leaveChannel();
         }
-        engine.enableExtension(EXTENSION_VENDOR_NAME, EXTENSION_AUDIO_FILTER_VOLUME, false);
+        engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTVT_PRE, false);
+        engine.enableExtension(EXTENSION_VENDOR_NAME_PRE, EXTENSION_RTAU_PRE, false);
         // enable video filter before enable video
-        engine.enableExtension(EXTENSION_VENDOR_NAME, EXTENSION_VIDEO_FILTER_WATERMARK, false);
         handler.post(RtcEngine::destroy);
         engine = null;
     }
@@ -423,13 +370,12 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
         join.setEnabled(false);
     }
 
-
-    void showToast(final String msg)
+    void showShortToast(final String msg)
     {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mycontext, msg, Toast.LENGTH_LONG).show();
+                Toast.makeText(mycontext, msg, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -447,7 +393,7 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
         public void onLeaveChannel(RtcStats stats) {
             super.onLeaveChannel(stats);
             Log.i(TAG, String.format("local user %d leaveChannel!", myUid));
-            showToast(String.format("local user %d leaveChannel!", myUid));
+            showShortToast(String.format("local user %d leaveChannel!", myUid));
         }
 
         /**Occurs when the local user joins a specified channel.
@@ -459,20 +405,23 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
             Log.i(TAG, String.format("onJoinChannelSuccess channel %s uid %d", channel, uid));
-            showToast(String.format("onJoinChannelSuccess channel %s uid %d", channel, uid));
+            showShortToast(String.format("onJoinChannelSuccess channel %s uid %d", channel, uid));
             myUid = uid;
+            joinchannel = channel;
             joined = true;
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     join.setEnabled(true);
                     join.setText(getString(R.string.leave));
-                    record.setEnabled(true);
-                    record.setProgress(100);
                 }
             });
         }
 
+        @Override
+        public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
+            super.onRemoteAudioStateChanged(uid, state, reason, elapsed);
+        }
         /**Occurs when a remote user (Communication)/host (Live Broadcast) joins the channel.
          * @param uid ID of the user whose audio state changes.
          * @param elapsed Time delay (ms) from the local user calling joinChannel/setClientRole
@@ -480,7 +429,12 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onUserJoined(int uid, int elapsed) {
             super.onUserJoined(uid, elapsed);
+            remoteUid = uid;
 //            Log.i(TAG, "onUserJoined->" + uid);
+            Log.i("sdktest", "user joined!" + uid);
+
+
+            showShortToast(String.format("user %d joined!", uid));//            Log.i(TAG, "onUserJoined->" + uid);
 //            showToast(String.format("user %d joined!", uid));
 //            /**Check if the context is correct*/
 //            handler.post(() ->
@@ -512,7 +466,7 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
         @Override
         public void onUserOffline(int uid, int reason) {
             Log.i(TAG, String.format("user %d offline! reason:%d", uid, reason));
-            showToast(String.format("user %d offline! reason:%d", uid, reason));
+            showShortToast(String.format("user %d offline! reason:%d", uid, reason));
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -535,7 +489,20 @@ public class SimpleExtension extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onEvent(String vendor, String extension, String key, String value) {
         if (vendor.equals("iLiveData"))
-            addlog(key + " " + value);
+            if (vendor.equals("iLiveData")) {
+                try {
+                    JSONObject jj = new JSONObject(value);
+                    String result = jj.getString("result");
+                    String startTs = jj.getString("startTs");
+                    String endTs = jj.getString("endTs");
+                    String recTs = jj.getString("recTs");
+                    String msg =key +  " startTs:" + startTs + " endTs:"+ endTs + " recTs:"+ recTs + " result:" +result;
+                    addlog(vendor + " " + extension+ " " + " " + key + " " + value);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
     }
 
 
